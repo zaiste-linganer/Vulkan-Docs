@@ -33,12 +33,12 @@ This proposal is effectively defining new structure, that can expand VkSemaphore
 
 [source,c]
 ----
-typedef struct VkTimelineSemaphoreSyncFdValueETC
+typedef struct VkTimelineSemaphoreSyncFdValueEXT
 {
     VkStructureType                     sType;
     const void*                         pNext;
     uint64_t                            value;
-} VkTimelineSemaphoreSyncFdValueETX;
+} VkTimelineSemaphoreSyncFdValueEXT;
 ----
 
 Requirements for valid usage with that structure would be:
