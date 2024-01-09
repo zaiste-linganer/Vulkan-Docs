@@ -15,7 +15,7 @@ Vulkan allows converting API sync objects from/to OS synchronization primitives 
 This very useful feature is however mostly limited right now to legacy VkFences and binary VkSemaphores, as spec does not offer any way to provide value for timeline semaphore import/export operation.
 Due to special nature of timeline semaphores, Vulkan specification currently does not define interactions between them and copy transference payload semaphores (like VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT).
 However, at least for export part, it's easy to define operation that would create syncFd object from timeline semaphore object for provided value of the timeline semaphore, preserving copy transference semantics
-(i.e. export of the fd having same effect as waiting on the semaphore - in case of timeline semaphore wait operation has no side effects, and not taking the reference to the semaphore payload).
+(i.e. export semaphore to the syncFd having same effect as waiting on the semaphore - in case of timeline semaphore wait operation has no side effects - and not taking the reference to the semaphore payload).
 
 == Solution Space
 
