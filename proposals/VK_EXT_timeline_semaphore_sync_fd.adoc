@@ -19,7 +19,7 @@ However, at least for export part, it's easy to define operation that would crea
 
 == Solution Space
 
-Right now, the only way to get syncFd waiting for specific value of timeline semaphore is to create unsignalled syncFd, and wait for the timeline semaphore to reach selected value in separate thread, followed by sending the signal of syncFd.
+Right now, the only way to get syncFd waiting for specific value of timeline semaphore is to create unsignaled syncFd, and wait for the timeline semaphore to reach selected value in separate thread, followed by sending the signal of syncFd.
 This is of course neither elegant nor efficient solution.
 
 The alternative is to allow exporting syncFd from the vkGetSemaphoreFdKHR. This again can be done in a few ways, each of them requires changing specification language around limitations for the vkGetSemaphoreFdKHR and VkSemaphoreGetFdInfoKHR.
@@ -54,4 +54,4 @@ This is intended to be out of the scope of this extension, unless there is stron
 
 === RESOLVED: What if the timeline semaphore counter was already greater than value?
 
-Signalled syncFd will be returned (-1).
+Signaled syncFd will be returned (-1).
