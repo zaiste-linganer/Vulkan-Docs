@@ -14,7 +14,8 @@ This extension is intended to allow interaction between copy transference object
 Vulkan allows converting API sync objects from/to OS synchronization primitives in most of the cases. List of use-cases is long, including (but not limited to) OS-specific synchronization related to presentation.
 This very useful feature is however mostly limited right now to legacy VkFences and binary VkSemaphores, as spec does not offer any way to provide value for timeline semaphore import/export operation.
 Due to special nature of timeline semaphores, Vulkan specification currently does not define interactions between them and copy transference payload semaphores (like VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT).
-However, at least for export part, it's easy to define operation that would create syncFd object from timeline semaphore object for provided value of the timeline semaphore, preserving copy transference semantics at the crucial level.
+However, at least for export part, it's easy to define operation that would create syncFd object from timeline semaphore object for provided value of the timeline semaphore, preserving copy transference semantics
+(i.e. export of the fd having same effect as waiting on the semaphore - in case of timeline semaphore wait operation has no side effects, and not taking the reference to the semaphore payload).
 
 == Solution Space
 
@@ -22,6 +23,7 @@ Right now, the only way to get syncFd waiting for specific value of timeline sem
 This is of course neither elegant nor efficient solution.
 
 The alternative is to allow to export syncFd from the vkGetSemaphoreFdKHR. This again can be done in a few ways, each of them requires changing specification language around limitations for the vkGetSemaphoreFdKHR and VkSemaphoreGetFdInfoKHR.
+
  . Define new function for obtaining syncFd from timeline semaphore. This is simple enought but stays in the opposition to past relationship between binary and timeline semaphores.
  . Extend VkSemaphoreGetFdInfoKHR pNext with a structure that would allow providing a value to wait for - and modify surroundign specification language to make it valid operation. This is the intended approach as it keeps current approach of timeline and binary semaphore being same VkSemaphore entity, while allowing effective operation of exporting timeline semaphore wait operation to syncFd.
 
@@ -40,6 +42,7 @@ typedef struct VkTimelineSemaphoreSyncFdValueETC
 ----
 
 Requirements for valid usage with that structure would be:
+
  . VkSemaphore in parent VkSemaphoreGetFdInfoKHR has to be of VK_SEMAPHORE_TYPE_TIMELINE(_KHR) type.
  . If this pNext struct is present, requirements about copy transference from VkSemaphoreGetFdInfoKHR valid usage section are not being applied.
 
