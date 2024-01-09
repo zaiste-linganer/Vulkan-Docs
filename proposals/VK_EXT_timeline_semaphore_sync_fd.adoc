@@ -19,13 +19,13 @@ However, at least for export part, it's easy to define operation that would crea
 
 == Solution Space
 
-Right now, the only way to get syncFd waiting for specific value of timeline semaphore is to create unsignaled syncFd, and wait for the timeline semaphore to reach selected value in separate thread, followed by sending the signal of syncFd.
+Right now, the only way to get syncFd waiting for specific value of timeline semaphore is to create unsignaled syncFd, and wait for the timeline semaphore to reach selected value in a separate thread, followed by sending the signal of syncFd.
 This is of course neither elegant nor efficient solution.
 
 The alternative is to allow exporting syncFd from the vkGetSemaphoreFdKHR. This again can be done in a few ways, each of them requires changing specification language around limitations for the vkGetSemaphoreFdKHR and VkSemaphoreGetFdInfoKHR.
 
- . Define a new function for obtaining syncFd from timeline semaphore. This is simple but stays in the opposition to past relationship between binary and timeline semaphores.
- . Extend VkSemaphoreGetFdInfoKHR pNext with a structure that would allow providing a value to wait for - and modify surroundign specification language to make it a valid operation. This is the intended approach as it keeps the current approach of timeline and binary semaphore being the same VkSemaphore entity, while allowing effective operation of exporting timeline semaphore wait operation to syncFd.
+ . Define a new function for obtaining syncFd from timeline semaphore. This is simple but stays in the opposition to the existing relationship between binary and timeline semaphores.
+ . Extend VkSemaphoreGetFdInfoKHR pNext with a structure that would allow providing a value to wait for - and modify surrounding specification language to make it a valid operation. This is the intended approach as it keeps the current approach of timeline and binary semaphore being the same VkSemaphore entity, while allowing effective operation of exporting timeline semaphore wait operation to syncFd.
 
 == Proposal
 
