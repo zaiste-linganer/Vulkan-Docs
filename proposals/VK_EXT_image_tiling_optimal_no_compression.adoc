@@ -7,29 +7,29 @@
 :refpage: https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/
 :sectnums:
 
-Allow disabling compression for selected images  in optimial layout.on creation time.
+Allow disabling compression for selected images  in optimal layout on creation time.
 
 == Problem Statement
 
 Images created with VK_IMAGE_TILING_OPTIMAL allows the drivers to apply, among others, two main optimizations: store the texels in HW specific sampler-friendly order - and apply HW specific compression models.
-The latter part is usually done by the storing a compression metadata inside the image bound memory, following main part of the image, that drivers has to be able to understand.
+The latter part is usually done by storing a compression metadata inside the image bound memory, following the main part of the image, that drivers have to be able to understand.
 
 Vulkan specification currently exposes the image export/import capabilities between the same physical devices/physical devices from the same group, with the drivers of the same driver version, as part of the Vulkan 1.1 and VK_KHR_external_memory extension.
-For sharing the memory between devices that does not match this requirements, or sharing with non-Vulkan capable devices, VK_EXT_queue_family_foreign extension is provided. VK_EXT_queue_family_foreign, while very powerfull,
+For sharing the memory between devices that do not match these requirements, or sharing with non-Vulkan capable devices, VK_EXT_queue_family_foreign extension is provided. VK_EXT_queue_family_foreign, while very powerful,
 usually involves extra operations, like getting rid of the compression before handling the image to the other entities.
 
-This extension tries to address the situation where two drivers works independently, not knowing about each other, potentially on two different OSes, but they can create the images from the same shared memory on the same GPU
+This extension tries to address the situation where two drivers work independently, not knowing about each other, potentially on two different OSes, but they can create the images from the same shared memory on the same GPU
 (although they don't even share a loader code). If the versions of the driver are compatible, this should work almost seamlessly between the two contexts - but in some corner cases, they can have issues with filling in
 compression metadata in a way that is comprehensible for the other driver.
 
 == Solution Space
 
-One of the possible solutions would be to create another type of ownership transition that would allow such sharing underlying image memory between two Vulkan contexts that works on the same GPU and have compatible drivers,
-but they are not really aware of each others. From the driver perspective though, there does not seem to be anything that can be done between EXTERNAL and FOREIGN queue families solutions, that would be both robust
+One of the possible solutions would be to create another type of ownership transition that would allow sharing underlying image memory between two Vulkan contexts that work on the same GPU and have compatible drivers,
+but they are not really aware of each other. From the driver perspective though, there does not seem to be anything that can be done between EXTERNAL and FOREIGN queue families solutions, that would be both robust
 for the presented use-case, and performant enough.
 
 The other approach would be not to share directly the memory between the images in the contexts, but rather transfer the content of the memory with some compression-agnostic API at the moment of ownership transition.
-This is however non-performant solution as well, as devices using the same underlying GPU should be able to use the memory itself in a coherent way between the images created on top of it.
+This is however a non-performant solution as well, as devices using the same underlying GPU should be able to use the memory itself in a coherent way between the images created on top of it.
 
 Another solution would be to use linear images, where content of the image is well known and its interpretation is well defined by the Vulkan spec. Linear images however are usually limited in their availability
 (by the specification and HW limitations) and non-performant on the GPU.
@@ -50,8 +50,8 @@ typedef struct VkCreateImageCompressionControlEXT {
 } VkCreateImageNoCompressionControlEXT;
 ----
 
-If disableCompression is set to false, driver behaves as if no structure was provided in VkImageCreateInfo chain - and applies default behavior.
-If the disableCompression is set to true, driver creates an image in a way that it expects backing memory to provide a storage for texels, but no other metadata is present, and the image is effectively keeping all the data in texels memory.
+If disableCompression is set to false, the driver behaves as if no structure was provided in the VkImageCreateInfo pNext chain - and applies default behavior.
+If the disableCompression is set to true, the driver creates an image in a way that it expects backing memory to provide storage for texels, but no other metadata is present, and the image is effectively keeping all the data in texels memory.
 
 == Issues
 
